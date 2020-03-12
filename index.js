@@ -1,4 +1,5 @@
 const speed = 5
+const frameRate = 10
 const canvas = document.getElementById('myCanvas')
 const sign = document.getElementById('sign')
 const score = document.getElementById('score')
@@ -16,14 +17,10 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     scoreStyle (snake.total)
 
-    for (let i = 0; i < snake.total; i++) {
-        if (snake.tails[i + 1]) {
-            positionShifer(snake.tails[i + 1], snake.tails[i])
-        }
-        snake.tails[i].show()
-        snake.tails[i].move()
-    }
-
+    snake.show()
+    // snake.update()
+    snake.move()
+    // snake.gameOver()
     food.show()
     if (snake.isEating(food)) {
         snake.eats(food)
@@ -85,4 +82,10 @@ function scoreStyle (myScore){
     score.style.fontFamily = "Oswald"
     score.style.color = "rgb(255, 255, 255)"
 }
-var interval = setInterval(draw, 10)
+
+function loop (){
+    draw()
+    window.requestAnimationFrame(loop)
+}
+
+loop ()

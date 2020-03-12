@@ -8,10 +8,33 @@ function Snake() {
     this.tails = [this]
     this.total = 1
 
-    this.show = () => {
-        ctx.fillStyle = this.snakeColor;
-        ctx.fillRect(this.x, this.y, this.snakeSize, this.snakeSize);
+    this.x = 0
+    this.y = 0
 
+    this.show = () => {
+        // console.log("tail 1",this.tails)
+
+        for (let i = 0; i < this.tails.length; i++) {
+            if (this.tails[i + 1]) {
+                // this.tails[i + 1].x = this.tails[i].x
+                // this.tails[i + 1].y = this.tails[i].y
+                this.positionShifer(this.tails[i + 1], this.tails[i])
+            }
+        }
+
+        for (let i = 0; i < this.tails.length; i++) {
+            ctx.fillStyle = this.tails[i].snakeColor;
+            ctx.fillRect(this.tails[i].x, this.tails[i].y, this.snakeSize, this.snakeSize);
+        }
+    }
+
+    this.update = () => {
+        // console.log(this.tails);
+
+        for (let i = 0; i < this.tails.length; i++) {
+            this.moveTmp(this.tails[i])
+        }
+        // console.log(this.tails)
     }
 
     this.move = () => {
@@ -31,6 +54,26 @@ function Snake() {
         }
     }
 
+    this.moveTmp = (_snake) => {
+        // console.log("move", this.x, this.y, this.dir, this    );
+        // console.log(_snake);
+
+        switch (_snake.dir) {
+            case "TOP":
+                if (_snake.y > 0) _snake.y -= _snake.speed
+                break;
+            case "DOWN":
+                if (_snake.y + _snake.snakeSize < canvas.height) _snake.y += _snake.speed
+                break;
+            case "LEFT":
+                if (_snake.x + _snake.snakeSize < canvas.width) _snake.x += _snake.speed
+                break;
+            case "RIGHT":
+                if (_snake.x > 0) _snake.x -= _snake.speed
+                break;
+        }
+    }
+
     this.isOpposit = (currenDir, newDir) => {
         const opp1 = ["TOP", "DOWN"]
         const opp2 = ["LEFT", "RIGHT"]
@@ -45,42 +88,76 @@ function Snake() {
         }
     }
 
-    this.eats =  (food)=>{
+    this.eats = (food) => {
         console.log("Food Eating");
         food.eaten();
-        this.total+=1
+        this.total += 1
         let snake = new Snake()
+        // console.log(this.tails);
+
         snake.snakeColor = this.getRandomColor()
+        // console.log();
+
         this.tails.push(snake)
         // console.log(this.tails);
-        
+
     }
 
-    this.isEating = (food)=>{
+    this.isEating = (food) => {
         let distX = this.x - food.x
         let distY = this.y - food.y
 
-        if(distX < 0) distX*=-1
-        if(distY < 0) distY*=-1
+        if (distX < 0) distX *= -1
+        if (distY < 0) distY *= -1
 
-        if(distX < this.snakeSize-2 && distY< this.snakeSize-2){
+        if (distX < this.snakeSize && distY < this.snakeSize) {
             return true
         }
-        
+
         return false
     }
 
-    this.getRandomColor = ()=>{
+    this.getRandomColor = () => {
         let letter = "0123456789abcdef"
         let col = '#'
         for (let i = 0; i < 6; i++) {
-            let ranNum = Math.floor(Math.random() * (15 - 1 + 1) + 1);
-            col+=letter[ranNum]
+            let ranNum = Math.floor(Math.random() * (15) + 1);
+            col += letter[ranNum]
         }
-        console.log(col);
-        
+        // console.log(col);
+
         return col
     }
 
-    
+
+    this.positionShifer = (currSnake, prevSnake) => {
+        switch (snake.dir) {
+            case "TOP":
+                currSnake.x = prevSnake.x
+                currSnake.y = prevSnake.y + 50
+                break;
+            case "DOWN":
+                currSnake.x = prevSnake.x
+                currSnake.y = prevSnake.y - 50
+                break;
+            case "LEFT":
+                currSnake.x = prevSnake.x - 50
+                currSnake.y = prevSnake.y
+                break;
+            case "RIGHT":
+                currSnake.x = prevSnake.x + 50
+                currSnake.y = prevSnake.y
+                break;
+        }
+
+    }
+
+    this.gameOver = ()=>{
+        // console.log(this.y + this.snakeSize);
+        
+        if((this.y + this.snakeSize >= canvas.height)){
+            alert("Game Over")
+        }
+    }
+
 }
